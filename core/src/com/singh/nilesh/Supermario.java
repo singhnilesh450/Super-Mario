@@ -28,6 +28,7 @@ public class Supermario extends ApplicationAdapter {
 	int score=0;
 	BitmapFont font;
 
+
 	ArrayList<Integer> coinX=new ArrayList<>();
 	ArrayList<Rectangle> coinRectangle=new ArrayList<>();
 	ArrayList<Integer> coinY=new ArrayList<>();
@@ -39,6 +40,7 @@ public class Supermario extends ApplicationAdapter {
 	ArrayList<Integer> bombY=new ArrayList<>();
 	int bombcount=0;
 	Texture bomb;
+	Texture dizzy;
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -48,6 +50,7 @@ public class Supermario extends ApplicationAdapter {
 		man[1]=new Texture("frame-2.png");
 		man[2]=new Texture("frame-3.png");
 		man[3]=new Texture("frame-4.png");
+		dizzy = new Texture("dizzy-1.png");
 		manY=Gdx.graphics.getHeight()/2-man[0].getHeight()/2;
 
 		coin=new Texture("coin.png");
@@ -78,49 +81,6 @@ public class Supermario extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(background, 0, 0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 
-		if(bombcount<250){
-			bombcount++;
-			/*Gdx.app.log("sdsdf",String.valueOf(coincount));*/
-		}else{
-			bombcount=0;
-			makeBomb();
-			/*Gdx.app.log("sdsdf","haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
-		}
-		bombRectangle.clear();
-		for(int i=0;i<bombX.size();i++){
-			batch.draw(bomb,bombX.get(i),bombY.get(i));
-			bombX.set(i,bombX.get(i)-8);
-			bombRectangle.add(new Rectangle(bombX.get(i),bombY.get(i),bomb.getWidth(),bomb.getHeight()));
-		}
-
-
-
-		if(coincount<100){
-			coincount++;
-			/*Gdx.app.log("sdsdf",String.valueOf(coincount));*/
-		}else{
-			coincount=0;
-			makeCoin();
-			/*Gdx.app.log("sdsdf","haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
-		}
-		coinRectangle.clear();
-		for(int i=0;i<coinX.size();i++){
-			batch.draw(coin,coinX.get(i),coinY.get(i));
-			coinX.set(i,coinX.get(i)-4);
-			coinRectangle.add(new Rectangle(coinX.get(i),coinY.get(i),coin.getWidth(),coin.getHeight()));
-		}
-
-
-
-        if(pause<8)
-        	pause++;
-        else {
-			pause = 0;
-			if (manstate < 3)
-				manstate++;
-			else
-				manstate = 0;
-		}
 		if(gameState==0) {
 			if (Gdx.input.justTouched())
 				gameState = 1;
@@ -133,12 +93,74 @@ public class Supermario extends ApplicationAdapter {
 			manY -= velocity;
 			if(manY<=0 ) {
 				manY=0;
-			}/*else{
-			gameState=2;
-		}*/
-		}
+			}
 
-		batch.draw(man[manstate], Gdx.graphics.getWidth()/2-man[manstate].getWidth()/2,manY);
+
+			if(pause<8)
+				pause++;
+			else {
+				pause = 0;
+				if (manstate < 3)
+					manstate++;
+				else
+					manstate = 0;
+			}
+
+			if(bombcount<250){
+				bombcount++;
+				/*Gdx.app.log("sdsdf",String.valueOf(coincount));*/
+			}else{
+				bombcount=0;
+				makeBomb();
+				/*Gdx.app.log("sdsdf","haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
+			}
+			bombRectangle.clear();
+			for(int i=0;i<bombX.size();i++){
+				batch.draw(bomb,bombX.get(i),bombY.get(i));
+				bombX.set(i,bombX.get(i)-8);
+				bombRectangle.add(new Rectangle(bombX.get(i),bombY.get(i),bomb.getWidth(),bomb.getHeight()));
+			}
+
+
+
+			if(coincount<100){
+				coincount++;
+				/*Gdx.app.log("sdsdf",String.valueOf(coincount));*/
+			}else{
+				coincount=0;
+				makeCoin();
+				/*Gdx.app.log("sdsdf","haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
+			}
+			coinRectangle.clear();
+			for(int i=0;i<coinX.size();i++){
+				batch.draw(coin,coinX.get(i),coinY.get(i));
+				coinX.set(i,coinX.get(i)-4);
+				coinRectangle.add(new Rectangle(coinX.get(i),coinY.get(i),coin.getWidth(),coin.getHeight()));
+			}
+
+		}else if(gameState==2){
+			if (Gdx.input.justTouched())
+				gameState = 1;
+			manY=Gdx.graphics.getHeight()/2-man[0].getHeight()/2;
+			score=0;
+			velocity=0;
+			coinY.clear();
+			coinX.clear();
+			coinRectangle.clear();
+			coincount=0;
+			bombY.clear();
+			bombX.clear();
+			bombRectangle.clear();
+			bombcount=0;
+
+
+
+		}
+           if(gameState==2)
+           	batch.draw(dizzy, Gdx.graphics.getWidth()/2-man[manstate].getWidth()/2,manY);
+           	else
+			   batch.draw(man[manstate], Gdx.graphics.getWidth()/2-man[manstate].getWidth()/2,manY);
+
         manRectangle.set(Gdx.graphics.getWidth()/2-man[manstate].getWidth()/2,manY,man[manstate].getWidth(),man[manstate].getHeight());
 
         for(int i=0;i<coinRectangle.size();i++){
@@ -154,7 +176,7 @@ public class Supermario extends ApplicationAdapter {
 
 		for(int i=0;i<bombRectangle.size();i++){
 			if(Intersector.overlaps(manRectangle,bombRectangle.get(i))){
-
+             gameState=2;
 			}
 		}
 
