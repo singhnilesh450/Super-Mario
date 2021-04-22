@@ -25,6 +25,11 @@ public class Supermario extends ApplicationAdapter {
 	ArrayList<Integer> coinY=new ArrayList<>();
 	int coincount=0;
 	Texture coin;
+
+	ArrayList<Integer> bombX=new ArrayList<>();
+	ArrayList<Integer> bombY=new ArrayList<>();
+	int bombcount=0;
+	Texture bomb;
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -37,6 +42,7 @@ public class Supermario extends ApplicationAdapter {
 		manY=Gdx.graphics.getHeight()/2-man[0].getHeight()/2;
 
 		coin=new Texture("coin.png");
+		bomb=new Texture("bomb.png");
 		random=new Random();
 	}
 
@@ -46,11 +52,33 @@ public class Supermario extends ApplicationAdapter {
      coinY.add((int)height);
      coinX.add(Gdx.graphics.getWidth());
 	}
+
+	public  void  makeBomb()
+	{
+		float height=  random.nextFloat() *Gdx.graphics.getHeight();
+		bombY.add((int)height);
+		bombX.add(Gdx.graphics.getWidth());
+	}
 	@Override
 	public void render () {
 
 		batch.begin();
 		batch.draw(background, 0, 0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+
+		if(bombcount<100){
+			bombcount++;
+			/*Gdx.app.log("sdsdf",String.valueOf(coincount));*/
+		}else{
+			bombcount=0;
+			makeBomb();
+			/*Gdx.app.log("sdsdf","haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
+		}
+		for(int i=0;i<bombX.size();i++){
+			batch.draw(bomb,bombX.get(i),bombY.get(i));
+			bombX.set(i,bombX.get(i)-8);
+		}
+
+
 
 		if(coincount<100){
 			coincount++;
@@ -64,6 +92,9 @@ public class Supermario extends ApplicationAdapter {
 			batch.draw(coin,coinX.get(i),coinY.get(i));
 			coinX.set(i,coinX.get(i)-4);
 		}
+
+
+
         if(pause<8)
         	pause++;
         else {
